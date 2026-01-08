@@ -1,5 +1,12 @@
+/********************************
+ * BOARD TYPE ESP 32 Dev Module *
+*********************************/
+
+
+
 #include "SD_MMC.h"
 #include "SPI.h"
+#include <WiFiManager.h>
 
 #include <WiFi.h>
 #include <NTPClient.h>
@@ -7,13 +14,8 @@
 
 #define BELL_PIN_1 0
 #define SMALL_LED_PIN 33
-// Replace with your network credentials
-//const char* ssid     = "BooTech";
-//const char* password = "BooW!f!~2o2%";
-const char* ssid     = "Galaxy S23 Ultra";
-const char* password = "12345678";
-//const char* ssid     = "GEVORG-HOME";
-//const char* password = "77909157";
+
+
 // Define NTP Client to get time
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP);
@@ -28,15 +30,14 @@ void setup() {
 
   Serial.begin(115200);
   Serial.print("Connecting to ");
-  Serial.println(ssid);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-    digitalWrite(SMALL_LED_PIN, HIGH);
-    delay(500);
-    digitalWrite(SMALL_LED_PIN, LOW);
+  WiFiManager wm;
+  bool res = wm.autoConnect("ESP32-CAM-SETUP");
+
+  if (!res) {
+    Serial.println("WiFi failed");
+    ESP.restart();
   }
+
   digitalWrite(SMALL_LED_PIN, LOW);
   // Print local IP address and start web server
   Serial.println("");
